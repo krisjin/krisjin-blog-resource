@@ -1,0 +1,1 @@
+# krisjin-blog-resource
