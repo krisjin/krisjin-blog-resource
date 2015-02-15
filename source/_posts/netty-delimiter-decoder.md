@@ -3,6 +3,8 @@ date: 2015-02-11 10:17:35
 categories: netty
 tags: [netty]
 ---
+
+
 ### DelimiterBasedFrameDecoder分隔符解码
 
 上一章介绍了换行的粘包拆包处理，使用到的类是LineBasedFrameDecoder和StringDecoder
@@ -10,157 +12,157 @@ tags: [netty]
 
 <!--more-->
 
-
 **服务端代码**
 
-	public class EchoServer {
+    <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EchoServer</span> </span>{
 
-	public void bind(int port) throws Exception {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">bind</span><span class="hljs-params">(<span class="hljs-keyword">int</span> port)</span> <span class="hljs-keyword">throws</span> Exception </span>{
 
-		// 配置服务端线程组
-		EventLoopGroup bossGroup = new NioEventLoopGroup();
-		EventLoopGroup workerGroup = new NioEventLoopGroup();
+        <span class="hljs-comment">// 配置服务端线程组</span>
+        EventLoopGroup bossGroup = <span class="hljs-keyword">new</span> NioEventLoopGroup();
+        EventLoopGroup workerGroup = <span class="hljs-keyword">new</span> NioEventLoopGroup();
 
-		ServerBootstrap boot = new ServerBootstrap();
-		try {
-			boot.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-					.option(ChannelOption.SO_BACKLOG, 100).handler(new LoggingHandler(LogLevel.INFO))
-					.childHandler(new ChannelInitializer<SocketChannel>() {
+        ServerBootstrap boot = <span class="hljs-keyword">new</span> ServerBootstrap();
+        <span class="hljs-keyword">try</span> {
+            boot.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, <span class="hljs-number">100</span>).handler(<span class="hljs-keyword">new</span> LoggingHandler(LogLevel.INFO))
+                    .childHandler(<span class="hljs-keyword">new</span> ChannelInitializer<SocketChannel>() {
 
-						@Override
-						protected void initChannel(SocketChannel ch) throws Exception {
+                        <span class="hljs-annotation">@Override</span>
+                        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> <span class="hljs-keyword">throws</span> Exception </span>{
 
-							ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
-							ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024, delimiter));
-							ch.pipeline().addLast(new StringDecoder());
-							ch.pipeline().addLast(new EchoServerHandler());
-						}
+                            ByteBuf delimiter = Unpooled.copiedBuffer(<span class="hljs-string">"$_"</span>.getBytes());
+                            ch.pipeline().addLast(<span class="hljs-keyword">new</span> DelimiterBasedFrameDecoder(<span class="hljs-number">1024</span>, delimiter));
+                            ch.pipeline().addLast(<span class="hljs-keyword">new</span> StringDecoder());
+                            ch.pipeline().addLast(<span class="hljs-keyword">new</span> EchoServerHandler());
+                        }
 
-					});
+                    });
 
-			// 绑定端口，同步等待成功
-			ChannelFuture cf = boot.bind(port).sync();
-			// 等待服务器端监听端口关闭
-			cf.channel().closeFuture().sync();
-		} finally {
-			// 优雅退出，释放线程池资源
-			bossGroup.shutdownGracefully();
-			workerGroup.shutdownGracefully();
-		}
-	}
+            <span class="hljs-comment">// 绑定端口，同步等待成功</span>
+            ChannelFuture cf = boot.bind(port).sync();
+            <span class="hljs-comment">// 等待服务器端监听端口关闭</span>
+            cf.channel().closeFuture().sync();
+        } <span class="hljs-keyword">finally</span> {
+            <span class="hljs-comment">// 优雅退出，释放线程池资源</span>
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
+    }
 
-	public static void main(String[] args) throws Exception {
-		int port = 8080;
-		if (args.length > 0) {
-			port = Integer.valueOf(args[0]);
-		}
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        <span class="hljs-keyword">int</span> port = <span class="hljs-number">8080</span>;
+        <span class="hljs-keyword">if</span> (args.length > <span class="hljs-number">0</span>) {
+            port = Integer.valueOf(args[<span class="hljs-number">0</span>]);
+        }
 
-		new EchoServer().bind(port);
-	}
-	}
+        <span class="hljs-keyword">new</span> EchoServer().bind(port);
+    }
+    }
+    `</pre>
 
+    **服务端handler**
 
-**服务端handler**
+    <pre>`<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EchoServerHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChannelHandlerAdapter</span> </span>{
 
-	public class EchoServerHandler extends ChannelHandlerAdapter {
+    <span class="hljs-keyword">int</span> counter = <span class="hljs-number">0</span>;
 
-	int counter = 0;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelRead</span><span class="hljs-params">(ChannelHandlerContext ctx, Object msg)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        String body = (String) msg;
+        System.out.println(<span class="hljs-string">"This is "</span> + ++counter + <span class="hljs-string">" times receive client : ["</span> + body + <span class="hljs-string">"]"</span>);
 
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		String body = (String) msg;
-		System.out.println("This is " + ++counter + " times receive client : [" + body + "]");
+        body += <span class="hljs-string">"$_"</span>;
+        ByteBuf echo =Unpooled.copiedBuffer(body.getBytes());
 
-		body += "$_";
-		ByteBuf echo =Unpooled.copiedBuffer(body.getBytes());
-		
-		ctx.writeAndFlush(echo);
-		
-	}
+        ctx.writeAndFlush(echo);
 
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		cause.printStackTrace();
-		ctx.close();
-	}
-	}
+    }
 
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">exceptionCaught</span><span class="hljs-params">(ChannelHandlerContext ctx, Throwable cause)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        cause.printStackTrace();
+        ctx.close();
+    }
+    }
+    `</pre>
 
-**客户端代码**
-	
-	public class EchoClient {
+    **客户端代码**
 
-	public void connect(int port, String host) throws Exception {
+    <pre>`<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">EchoClient</span> {
 
-		EventLoopGroup group = new NioEventLoopGroup();
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">connect</span><span class="hljs-params">(<span class="hljs-keyword">int</span> port, String host)</span> throws Exception </span>{
 
-		try {
-			Bootstrap boot = new Bootstrap();
-			boot.group(group).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true)
-					.handler(new ChannelInitializer<SocketChannel>() {
+        EventLoopGroup <span class="hljs-keyword">group</span> = <span class="hljs-keyword">new</span> NioEventLoopGroup();
 
-						@Override
-						protected void initChannel(SocketChannel ch) throws Exception {
+        <span class="hljs-keyword">try</span> {
+            Bootstrap boot = <span class="hljs-keyword">new</span> Bootstrap();
+            boot.<span class="hljs-keyword">group</span>(<span class="hljs-keyword">group</span>).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, <span class="hljs-keyword">true</span>)
+                    .handler(<span class="hljs-keyword">new</span> ChannelInitializer<SocketChannel>() {
 
-							ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
-							ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024, delimiter));
-							ch.pipeline().addLast(new StringDecoder());
-							ch.pipeline().addLast(new EchoClientHandler());
+                        @<span class="hljs-function">Override
+                        <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">initChannel</span><span class="hljs-params">(SocketChannel ch)</span> throws Exception </span>{
 
-						}
+                            ByteBuf delimiter = Unpooled.copiedBuffer(<span class="hljs-string">"$_"</span>.getBytes());
+                            ch.pipeline().addLast(<span class="hljs-keyword">new</span> DelimiterBasedFrameDecoder(<span class="hljs-number">1024</span>, delimiter));
+                            ch.pipeline().addLast(<span class="hljs-keyword">new</span> StringDecoder());
+                            ch.pipeline().addLast(<span class="hljs-keyword">new</span> EchoClientHandler());
 
-					});
+                        }
 
-			// 发起异步连接操作
-			ChannelFuture cf = boot.connect(host, port).sync();
-			// 等待客户端链路关闭
-			cf.channel().closeFuture().sync();
+                    });
 
-		} finally {
-			// 优雅退出，释放NIO线程组
-			group.shutdownGracefully();
-		}
+            <span class="hljs-comment">// 发起异步连接操作</span>
+            ChannelFuture cf = boot.connect(host, port).sync();
+            <span class="hljs-comment">// 等待客户端链路关闭</span>
+            cf.channel().closeFuture().sync();
 
-	}
+        } <span class="hljs-keyword">finally</span> {
+            <span class="hljs-comment">// 优雅退出，释放NIO线程组</span>
+            <span class="hljs-keyword">group</span>.shutdownGracefully();
+        }
 
-	public static void main(String[] args) throws Exception {
-		int port = 8080;
-		String host = "127.0.0.1";
-		new EchoClient().connect(port, host);
-	}
+    }
 
-	}
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> throws Exception </span>{
+        <span class="hljs-keyword">int</span> port = <span class="hljs-number">8080</span>;
+        String host = <span class="hljs-string">"127.0.0.1"</span>;
+        <span class="hljs-keyword">new</span> EchoClient().connect(port, host);
+    }
 
+    }
+    `</pre>
 
-**客户端handler**
+    **客户端handler**
 
-	public class EchoClientHandler extends ChannelHandlerAdapter {
-	int counter = 0;
-	static final String ECHO_REQ = "Hi, krisjin. Welcome to Netty.$_";
+    <pre>`<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EchoClientHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ChannelHandlerAdapter</span> </span>{
+    <span class="hljs-keyword">int</span> counter = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String ECHO_REQ = <span class="hljs-string">"Hi, krisjin. Welcome to Netty.$_"</span>;
 
-	public EchoClientHandler() {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">EchoClientHandler</span><span class="hljs-params">()</span> </span>{
 
-	}
+    }
 
-	public void channelActive(ChannelHandlerContext ctx) {
-		for (int i = 0; i < 10; i++) {
-			ByteBuf write = Unpooled.copiedBuffer(ECHO_REQ.getBytes());
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelActive</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> </span>{
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i < <span class="hljs-number">10</span>; i++) {
+            ByteBuf write = Unpooled.copiedBuffer(ECHO_REQ.getBytes());
 
-			ctx.writeAndFlush(write);
+            ctx.writeAndFlush(write);
 
-		}
-	}
+        }
+    }
 
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelRead</span><span class="hljs-params">(ChannelHandlerContext ctx, Object msg)</span> <span class="hljs-keyword">throws</span> Exception </span>{
 
-		System.out.println("This is " + ++counter + "times recevie server : [" + msg + "]");
+        System.out.println(<span class="hljs-string">"This is "</span> + ++counter + <span class="hljs-string">"times recevie server : ["</span> + msg + <span class="hljs-string">"]"</span>);
 
-	}
+    }
 
-	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-		ctx.flush();
-	}
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">channelReadComplete</span><span class="hljs-params">(ChannelHandlerContext ctx)</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        ctx.flush();
+    }
 
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		cause.printStackTrace();
-		ctx.close();
-	}
-	}
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">exceptionCaught</span><span class="hljs-params">(ChannelHandlerContext ctx, Throwable cause)</span> </span>{
+        cause.printStackTrace();
+        ctx.close();
+    }
+    }
+    
