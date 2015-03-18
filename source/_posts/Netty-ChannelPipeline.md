@@ -113,3 +113,20 @@ ChannelPipeline通过ChannelHandler接口来实现事件的拦截和处理，由
 	}
 
 	}
+
+
+## 构建pipeline
+事实上用户不需要创建pipeline，因为使用ServerBootstrap或Bootstrap启动服务端或客户端时，Netty会为每个Channel创建一个独立的pipeline,对于使用者而言，只需要将自定义的拦截器加入到pipeline即可，相关代码入下：
+
+	pipeline=ch.pipeline();
+	pipeline.addLast("decoder",new MyProtocolDecoder());
+	pipeline.addLast("encoder",new MyProtocolEncoder());
+
+对于编写这样的ChannelHandler，它存在先后顺序，例如 MessageToMessageDecoder,在它之前往往需要有ByteToMessageDecoder将ByteBuf编码为对象，然后对对象做二次编码得到最终的POJO对象。Pipeline支持指定位置添加或者删除拦截器，相关接口定义如下：
+
+![](/img/channelpipeline-sort.png)
+
+## ChannelPipeline的主要特性
+ChannelPipeline支持运行态动态的添加或者删除ChannelHandler，在某些场景下这个特性非常实用。例如当业务高峰期需要对系统做拥塞保护时，就可以根据当前的系统时间进行判断，如果处于业务高峰期，则动态地将系统拥塞保护添加到当前的ChannelPipeline中，当高峰期过去之后，就可以动态的删除拥塞保护ChannelHandler了。
+
+ChannelPipeline是线程安全的，这意味着N个业务线程可以并发地操作ChannelPipeline而不存在多线程并发问题。但是，ChannelHandler却不是线程安全的，这意味着尽管ChannelPipeline是线程安全的，但是用户仍然需要自己保证ChannelHandler的线程安全。
