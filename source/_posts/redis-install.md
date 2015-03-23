@@ -1,6 +1,6 @@
-title: redis install
+title: Ubuntu安装redis
 date: 2015-03-19 09:20:44
-categoris: NoSQL
+categories: NoSQL
 tags: [nosql,redis]
 ---
 
@@ -120,6 +120,9 @@ net.core.somaxconn
 	3) "3"
 	
 
+### 停止redis
+	
+	./redis-cli shutdown
 
 
 
