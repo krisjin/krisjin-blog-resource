@@ -48,3 +48,7 @@ tags:
 为了和之前的版本不会产生冲突，这里修改.gitignore 将package.json添加进去，当然这不是好的解决方法。
 
 也可以把之前的打个tag
+
+
+
+参考：[https://github.com/hexojs/hexo/issues/156](https://github.com/hexojs/hexo/issues/156 "https://github.com/hexojs/hexo/issues/156")
