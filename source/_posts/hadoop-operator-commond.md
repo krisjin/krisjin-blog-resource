@@ -35,3 +35,6 @@ tags:
 
 #### 9. 查看文件
 	./bin/hadoop fs -cat /user/kris/output-redis/part-r-00000
+
+#### 10. 提交Job
+	./bin/hadoop jar hadoop-sample-1.0-SNAPSHOT.jar org.hadoop.WordCount redis.txt count-outout
