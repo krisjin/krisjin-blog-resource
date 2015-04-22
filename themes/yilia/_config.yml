@@ -1,9 +1,9 @@
 # Header
 menu:
   主页: /
-  所有文章: /archives
+  归档: /archives
   读书: /readbook
-  #随笔: /tags
+  分类: /categories
   关于: /about
 
 # SubNav
