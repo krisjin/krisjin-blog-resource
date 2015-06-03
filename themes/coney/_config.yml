@@ -15,7 +15,7 @@ menu:
 widgets: 
 - category
 - tag
-- links
+#- links
 - rss
 - tagcloud
 ## provide six widgets:category,tag,rss,archive,tagcloud,links.
@@ -86,7 +86,7 @@ jiathis:
 ####Baidu Analytics
 baidu_analytics:
   enable: true
-  id: 391982416296a0d54221f59fe35250d4 # your baidu analytics id
+  id: 197f0aacba50f9f3839f6aff0176bae4 # your baidu analytics id
 
 ####Baidu Share
 baidu_share:
