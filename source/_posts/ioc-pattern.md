@@ -1,6 +1,6 @@
 title: IoC模式
 date: 2015-02-17 15:01:37
-categories: design pattern
+categories: 设计模式
 tags: [ioc,di]
 ---
 

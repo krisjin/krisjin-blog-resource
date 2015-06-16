@@ -1,7 +1,7 @@
 title: Redis 命令
 date: 2015-06-09 17:30:44
-categories: NoSQl
-tags: [redis]
+categories: NoSQL
+tags: [redis,nosql]
 ---
 
 ## 连接操作相关的命令

@@ -1,7 +1,7 @@
 title: 高吞吐高并发Java NIO服务的架构
 date: 2015-04-08 22:45:39
-categories: concurrent
-tags:
+categories: 并发
+tags: [并发]
 ---
 
 

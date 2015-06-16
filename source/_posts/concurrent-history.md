@@ -1,6 +1,6 @@
 title: 并发简史
 date: 2015-03-10 19:59:27
-categories: concurrent
+categories: 并发
 tags: [并发]
 ---
 

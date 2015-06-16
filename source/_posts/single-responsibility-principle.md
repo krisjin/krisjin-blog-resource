@@ -1,7 +1,7 @@
 title: "单一职责原则的系统设计"
 date: 2015-04-14 15:16:30
-categories: design pattern
-tags:
+categories: 设计模式
+tags: [设计模式]
 ---
 
 摘自维基百科：
