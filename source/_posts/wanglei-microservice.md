@@ -1,7 +1,7 @@
 title: "从单块架构到微服务架构"
 date: 2015-04-10 13:26:34
-categories: MicroServices
-tags:
+categories: 微服务
+tags: [微服务,SOA]
 ---
 
 转自：http://www.infoq.com/cn/articles/from-monolith-application-to-micro-service

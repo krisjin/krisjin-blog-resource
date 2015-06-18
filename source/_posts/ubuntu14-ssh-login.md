@@ -1,7 +1,6 @@
 title: "ubuntu14 ssh登录问题？"
 date: 2015-04-04 11:49:33
-categories: Linux
-tags:
+tags: [ubuntu]
 ---
 
 1. 关闭防火墙  

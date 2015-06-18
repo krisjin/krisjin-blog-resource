@@ -1,7 +1,7 @@
 title: "基于微服务架构，改造企业核心系统之实践"
 date: 2015-04-10 19:07:42
-categories: MicroServices
-tags:
+categories: 微服务
+tags: [微服务]
 ---
 
 ## 1. 背景与挑战

@@ -1,7 +1,7 @@
 title: 58推荐系统学习
 date: 2015-04-15 20:49:31
-categories: Recommendation
-tags:
+categories: 推荐
+tags: [推荐]
 ---
 
 ## 1.推荐介绍

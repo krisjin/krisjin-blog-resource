@@ -54,3 +54,148 @@ Jetty或spring IoC格式的XML文件或在命令行上列出,ini文件或添加�
 
 
 ## Jetty IoC XML 配置格式
+
+	public class ExampleServer {
+
+    public static void main(String[] args) throws Exception {
+        Server server = new Server();
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(8080);
+        server.setConnectors(new Connector[]{connector});
+        ServletContextHandler context = new ServletContextHandler();
+        context.setContextPath("/");
+        context.addServlet(HelloServlet.class, "/hello");
+        context.addServlet(AsyncEchoServlet.class, "/echo/*");
+        HandlerCollection handlers = new HandlerCollection();
+        handlers.setHandlers(new Handler[]{context, new DefaultHandler()});
+        server.setHandler(handlers);
+        server.start();
+        server.join();
+    }
+	}
+
+HelloServlet
+
+
+	
+	/**
+	 * <p/>
+	 * User : krisibm@163.com
+	 * Date: 2015/6/17
+	 * Time: 18:00
+	 */
+	public class HelloServlet extends HttpServlet {
+    final String greeting;
+
+    public HelloServlet() {
+        this("Hello");
+    }
+
+    public HelloServlet(String greeting) {
+        this.greeting = greeting;
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().println("<h1>" + greeting + " from HelloServlet</h1>");
+    }
+	}
+
+
+
+AsyncEchoServlet
+
+	public class AsyncEchoServlet extends HttpServlet {
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        AsyncContext asyncContext = request.startAsync(request, response);
+        asyncContext.setTimeout(0);
+        Echoer echoer = new Echoer(asyncContext);
+        request.getInputStream().setReadListener(echoer);
+        response.getOutputStream().setWriteListener(echoer);
+    }
+
+    private class Echoer implements ReadListener, WriteListener {
+        private final byte[] buffer = new byte[4096];
+        private final AsyncContext asyncContext;
+        private final ServletInputStream input;
+        private final ServletOutputStream output;
+        private final AtomicBoolean complete = new AtomicBoolean(false);
+
+        private Echoer(AsyncContext asyncContext) throws IOException {
+            this.asyncContext = asyncContext;
+            this.input = asyncContext.getRequest().getInputStream();
+            this.output = asyncContext.getResponse().getOutputStream();
+        }
+
+        @Override
+        public void onDataAvailable() throws IOException {
+            onWritePossible();
+        }
+
+        @Override
+        public void onAllDataRead() throws IOException {
+            onWritePossible();
+        }
+
+        @Override
+        public void onWritePossible() throws IOException {
+            // This method is called:
+            //   1) after first registering a WriteListener (ready for first write)
+            //   2) after first registering a ReadListener iff write is ready
+            //   3) when a previous write completes after an output.isReady() returns false
+            //   4) from an input callback
+
+            // We should try to read, only if we are able to write!
+            while (output.isReady() && input.isReady()) {
+                int read = input.read(buffer);
+                if (read < 0) {
+                    if (complete.compareAndSet(false, true))
+                        asyncContext.complete();
+                    break;
+                } else if (read > 0) {
+                    output.write(buffer, 0, read);
+                }
+            }
+        }
+
+        @Override
+        public void onError(Throwable failure) {
+            failure.printStackTrace();
+            asyncContext.complete();
+        }
+    }
+	}
+
+
+
+pom
+
+	<dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.0.4.v20130625</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.orbit</groupId>
+                    <artifactId>javax.servlet</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>9.0.4.v20130625</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+        </dependency>

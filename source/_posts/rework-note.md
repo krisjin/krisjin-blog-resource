@@ -1,7 +1,7 @@
 title: "重来:更为简单有效的商业思维读书笔记"
 date: 2015-04-10 12:41:56
-categories: read book
-tags:
+categories: 读书
+tags: [重来,商业]
 ---
 
 ## 1. 半成品不等于残缺品
