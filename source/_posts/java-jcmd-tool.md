@@ -1,6 +1,6 @@
 title: jcmd工具使用
 date: 2015-09-02 11:31:49
-categories: java
+categories: Java
 tags: [调优]
 ---
 
