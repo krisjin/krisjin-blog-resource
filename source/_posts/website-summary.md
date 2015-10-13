@@ -1,6 +1,6 @@
 title: "项目成长总结"
 date: 2015-04-23 09:19:46
-categories: Architecture
+categories: 架构
 tags: [创业，经验]
 ---
 

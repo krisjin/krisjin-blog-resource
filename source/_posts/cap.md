@@ -1,6 +1,6 @@
 title: "持续可用与CAP理论 – 一个系统开发者的观点"
 date: 2015-04-22 13:30:24
-categories: Architecture
+categories: 架构
 tags: [cap]
 ---
 

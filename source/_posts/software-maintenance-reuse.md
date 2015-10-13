@@ -1,6 +1,6 @@
 title: 软件的可维护与可复用
 date: 2015-02-18 10:40:59
-categories: Architecture
+categories: 架构
 tags: 
 ---
 

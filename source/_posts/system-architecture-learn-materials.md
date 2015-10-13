@@ -1,6 +1,6 @@
 title: 系统架构领域的一些学习材料
 date: 2015-06-03 14:01:08
-categories: Architecture
+categories: 架构
 tags: [架构]
 ---
 
